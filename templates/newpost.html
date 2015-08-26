@@ -1,0 +1,24 @@
+{% extends "/templates/base.html" %}
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="/">Blog</a></li>
+  <li class="active">New post</li>
+</ol>
+
+<form method="post">
+    <div class="form-group">
+        <label for="subject">Subject</label>
+        <input class="form-control" type="text" name="subject" id="subject" value="{{ subject }}">
+    </div>
+    <div class="form-group">
+        <label for="content">Content</label>
+        <textarea class="form-control" name="content" id="content">{{ content }}</textarea>
+    </div>
+
+    <p class="text-danger">{{ error }}</p>
+
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+{% endblock %}

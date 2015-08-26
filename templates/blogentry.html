@@ -1,0 +1,15 @@
+{% extends "/templates/base.html" %}
+
+{% block content %}
+<ol class="breadcrumb">
+    <li><a href="/blog">Blog</a></li>
+    <li class="active">{{ blog_entry_id }}</li>
+</ol>
+
+<div>
+    <div>{{ blog_entry.subject }} </div>
+    <div>{{ blog_entry.content | safe }} </div>
+    <div>{{ blog_entry.created }} </div>
+</div>
+
+{% endblock %}

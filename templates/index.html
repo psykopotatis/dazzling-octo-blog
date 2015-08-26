@@ -1,0 +1,29 @@
+{% extends "/templates/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb">
+            <li class="active">Blog</li>
+        </ol>
+
+        <p><a href="/blog/signup">signup</a> | <a href="/blog/login">login | <a href="/blog/newpost">new post</a></p>
+
+        <p>{{ visits }} times.</p>
+
+        <hr>
+
+        {% for blog_entry in blog_entries %}
+
+        <div>
+            <div>{{ blog_entry.subject }} </div>
+            <div>{{ blog_entry.content | safe }} </div>
+            <div>{{ blog_entry.created }} </div>
+        </div>
+
+        <hr>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "/templates/base.html" %}
+
+{% block content %}
+<ol class="breadcrumb">
+    <li><a href="/">Blog</a></li>
+    <li class="active">Signup</li>
+</ol>
+
+<form method="post">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input class="form-control" type="text" name="username" id="username" value="{{ username }}">
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input class="form-control" type="text" name="password" id="password" value="{{ password }}">
+    </div>
+
+    <div class="form-group">
+        <label for="verify">Verify</label>
+        <input class="form-control" type="text" name="verify" id="verify" value="{{ verify }}">
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input class="form-control" type="text" name="email" id="email" value="{{ email }}">
+    </div>
+
+    <p class="text-danger">{{ error }}</p>
+
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+{% endblock %}

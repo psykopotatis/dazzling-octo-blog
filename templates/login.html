@@ -1,0 +1,25 @@
+{% extends "/templates/base.html" %}
+
+{% block content %}
+<ol class="breadcrumb">
+    <li><a href="/">Blog</a></li>
+    <li class="active">Login</li>
+</ol>
+
+<form method="post">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input class="form-control" type="text" name="username" id="username" value="{{ username }}">
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input class="form-control" type="text" name="password" id="password" value="{{ password }}">
+    </div>
+
+    <p class="text-danger">{{ error }}</p>
+
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+{% endblock %}
