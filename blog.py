@@ -90,6 +90,11 @@ class SignupPage(BaseHandler):
             self.render_page(username, password, verify, email, error)
 
 
+class LogoutPage(BaseHandler):
+    def get(self):
+        for cookie in self.request.cookies:
+            self.response.delete_cookie(cookie)
+        self.redirect('/blog/signup')
 
 
 
@@ -98,6 +103,7 @@ app = webapp2.WSGIApplication([
     (r'/blog/signup', SignupPage),
     (r'/blog/welcome', WelcomePage),
     (r'/blog/login', LoginPage),
+    (r'/blog/logout', LogoutPage),
     (r'/blog/newpost', NewPostPage),
     (r'/blog/(\d+)', BlogEntryPage),
 ], debug=True)

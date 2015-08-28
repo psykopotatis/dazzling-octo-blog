@@ -1,0 +1,5 @@
+# Start server
+/home/ingemar.hjalmstad/bin/google_appengine/dev_appserver.py blog/
+
+# Deploy live
+/home/ingemar.hjalmstad/bin/google_appengine/appcfg.py -A rosy-hangout-1044 update blog/
