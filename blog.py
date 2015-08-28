@@ -72,11 +72,8 @@ class SignupPage(BaseHandler):
             # Store this instance in the database
             new_user.put()
 
-            # Store user id in secure cookie
-            secure_val = self.make_secure_val(str(new_user.key().id()))
+            self.set_secure_cookie('userId', str(new_user.key().id()))
 
-            # 1. Set cookie
-            self.response.headers.add_header('Set-Cookie', 'userId=%s;Path=/' % secure_val)
             # 2. Redirect
             self.redirect('/blog/welcome')
         else:
