@@ -10,21 +10,15 @@ class BlogMainPage(BaseHandler):
     def get(self):
         # blog_entries = db.GqlQuery('SELECT * FROM BlogEntry2 ORDER BY created DESC')
         blog_entries = BlogEntry2.all().order('created')
-        # Cookies
-        visits = 0
-        visit_cookie_str = self.request.cookies.get('visits')
-        # If there is a cookie = if this is user have been here before
-        if visit_cookie_str:
-            cookie_val = self.check_secure_val(visit_cookie_str)
-            # If it's secure
-            if cookie_val:
-                visits = int(cookie_val)
 
+        visits = 0
+        visit_cookie_str = self.read_secure_cookie('visits')
+        # If there's a cookie 'visits' the user have been here before
+        if visit_cookie_str:
+            visits = int(visit_cookie_str)
         visits += 1
 
-        new_cookie_val = self.make_secure_val(str(visits))
-
-        self.response.headers.add_header('Set-Cookie', 'visits=%s' % new_cookie_val)
+        self.set_secure_cookie('visits', str(visits))
 
         self.render('/templates/index.html', blog_entries=blog_entries, visits=visits)
 
