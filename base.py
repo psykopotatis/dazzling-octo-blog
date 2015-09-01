@@ -63,4 +63,5 @@ class BaseHandler(webapp2.RequestHandler):
         """
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('userId')
+        print('INITIALIZE! userId: ' + uid)
         self.user = uid and User.by_id(int(uid))
