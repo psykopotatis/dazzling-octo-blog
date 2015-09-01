@@ -28,10 +28,8 @@ class LoginPage(BaseHandler):
             if password_hash == user.password_hash:
                 print('PASSWORD OK')
                 # Store user id in secure cookie
-                secure_val = self.make_secure_val(str(user.key().id()))
-                # 1. Set cookie
-                self.response.headers.add_header('Set-Cookie', 'userId=%s;Path=/' % secure_val)
-                # 2. Redirect
+                self.set_secure_cookie('userId', str(user.key().id()))
+                # Redirect to welcome page
                 self.redirect('/blog/welcome')
             else:
                 error = 'Error, username or password wrong.'
