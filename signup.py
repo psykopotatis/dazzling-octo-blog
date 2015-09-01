@@ -16,13 +16,19 @@ class SignupPage(BaseHandler):
         verify = self.request.get('verify')
         email = self.request.get('email')
         if username and password and verify:
-            new_user = User.register(username, password, email)
-            new_user.put()
+            existing_user = User.by_name(username)
+            # Make user user doesnt already exists
+            if existing_user:
+                error = 'Error, user already exists: ' + username
+                self.render_page(username, password, verify, email, error)
+            else:
+                new_user = User.register(username, password, email)
+                new_user.put()
 
-            self.set_secure_cookie('userId', str(new_user.key().id()))
+                self.set_secure_cookie('userId', str(new_user.key().id()))
 
-            # 2. Redirect
-            self.redirect('/blog/welcome')
+                # 2. Redirect
+                self.redirect('/blog/welcome')
         else:
             error = 'Error, you need to fill in all values.'
             self.render_page(username, password, verify, email, error)
