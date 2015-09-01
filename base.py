@@ -1,8 +1,5 @@
 import hmac
 import os
-import hashlib
-import random
-import string
 import logging
 
 import jinja2
@@ -33,20 +30,6 @@ class BaseHandler(webapp2.RequestHandler):
         # Returns None otherwise
         if secure_val == self.make_secure_val(val):
             return val
-
-    @staticmethod
-    def make_salt():
-        return ''.join(random.choice(string.ascii_lowercase) for x in range(5))
-
-    def make_password_hash(self, name, password, salt=None):
-        if not salt:
-            salt = self.make_salt()
-        h = hashlib.sha256(name + password + salt).hexdigest()
-        return "%s|%s" % (h, salt)
-
-    def validate_password(self, name, password, h):
-        salt = h.split('|')[1]
-        return h == self.make_password_hash(name, password, salt)
 
     def write(self, *a, **kwargs):
         self.response.write(*a, **kwargs)

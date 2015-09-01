@@ -16,9 +16,7 @@ class SignupPage(BaseHandler):
         verify = self.request.get('verify')
         email = self.request.get('email')
         if username and password and verify:
-            password_hash = self.make_password_hash(username, password)
-            new_user = User(username=username, password_hash=password_hash, email=email)
-            # Store this instance in the database
+            new_user = User.register(username, password, email)
             new_user.put()
 
             self.set_secure_cookie('userId', str(new_user.key().id()))
