@@ -7,6 +7,7 @@ import logging
 
 import jinja2
 import webapp2
+from models import User
 
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -70,3 +71,13 @@ class BaseHandler(webapp2.RequestHandler):
         if secure_cookie:
             cookie_val = self.check_secure_val(secure_cookie)
             return cookie_val
+
+    def initialize(self, *a, **kw):
+        """
+        Runs on every request.
+        Checks that user is logged in.
+
+        """
+        webapp2.RequestHandler.initialize(self, *a, **kw)
+        uid = self.read_secure_cookie('userId')
+        self.user = uid and User.by_id(int(uid))
