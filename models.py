@@ -44,16 +44,16 @@ class User(db.Model):
 
     @classmethod
     def by_id(cls, uid):
-        return User.get_by_id(uid)
+        return cls.get_by_id(uid)
 
     @classmethod
     def by_name(cls, name):
-        return User.all().filter('name', name).get()
+        return cls.all().filter('name', name).get()
 
     @classmethod
     def register(cls, name, password, email):
         password_hash = make_password_hash(name, password)
-        return User(name=name,
+        return cls(name=name,
                     password_hash=password_hash,
                     email=email)
 
