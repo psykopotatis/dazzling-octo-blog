@@ -15,17 +15,8 @@ class LoginPage(BaseHandler):
 
         if username and password:
             # Fetch user
-            user_query = User.all()
-            user_query.filter("username =", username)
-            user = user_query.get()
-            print('Ok! found: ' + user.username)
-            # Extract password hash
-            salt = user.password_hash.split('|')[1]
-            # Check that password match password_hash
-            password_hash = self.make_password_hash(username, password, salt)
-            print(password_hash)
-            print(user.password_hash)
-            if password_hash == user.password_hash:
+            user = User.login(username, password)
+            if user:
                 print('PASSWORD OK')
                 # Store user id in secure cookie
                 self.set_secure_cookie('userId', str(user.key().id()))

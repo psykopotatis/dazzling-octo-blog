@@ -11,10 +11,15 @@ def make_password_hash(name, password, salt=None):
     if not salt:
         salt = make_salt()
     h = hashlib.sha256(name + password + salt).hexdigest()
+    print('cookie hash: ' + h)
     return "%s|%s" % (h, salt)
 
 def validate_password(name, password, h):
     salt = h.split('|')[1]
+    print('cookie: ' + h)
+    print('cookie salt: ' + salt)
+    password_hash = make_password_hash(name, password, salt)
+    print('generated cookie: ' + password_hash)
     return h == make_password_hash(name, password, salt)
 
 def users_key(group='default'):
@@ -32,7 +37,7 @@ class BlogEntry2(db.Model):
         return self.content.replace('\n', '<br>')
 
 class User(db.Model):
-    username = db.StringProperty(required=True)
+    name = db.StringProperty(required=True)
     password_hash = db.StringProperty(required=True)
     email = db.TextProperty(required=False)
     created = db.DateTimeProperty(auto_now_add=True)
@@ -46,14 +51,15 @@ class User(db.Model):
         return User.all().filter('name', name).get()
 
     @classmethod
-    def register(cls, username, password, email):
-        password_hash = make_password_hash(username, password)
-        return User(username=username,
+    def register(cls, name, password, email):
+        password_hash = make_password_hash(name, password)
+        return User(name=name,
                     password_hash=password_hash,
                     email=email)
 
     @classmethod
     def login(cls, name, password):
         user = cls.by_name(name)
+        print(user)
         if user and validate_password(name, password, user.password_hash):
             return user
