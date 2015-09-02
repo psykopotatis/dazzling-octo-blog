@@ -7,18 +7,16 @@
             <li class="active">Blog</li>
         </ol>
 
-        <p><a href="/blog/signup">signup</a> | <a href="/blog/login">login | <a href="/blog/newpost">new post</a></p>
-
-        <p>{{ visits }} times.</p>
+        <p>Cool. You have been here {{ visits }} times.</p>
 
         <hr>
 
         {% for blog_entry in blog_entries %}
 
         <div>
-            <div>{{ blog_entry.subject }} </div>
-            <div>{{ blog_entry.content | safe }} </div>
-            <div>{{ blog_entry.created }} </div>
+            <div>{{ blog_entry.created }}</div>
+            <div><strong>{{ blog_entry.subject }}</strong></div>
+            <div>{{ blog_entry.content | safe }}</div>
         </div>
 
         <hr>
