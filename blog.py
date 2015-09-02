@@ -58,7 +58,7 @@ class LogoutPage(BaseHandler):
     def get(self):
         for cookie in self.request.cookies:
             self.response.delete_cookie(cookie)
-        self.redirect('/blog/signup')
+        self.redirect('/blog')
 
 
 app = webapp2.WSGIApplication([
