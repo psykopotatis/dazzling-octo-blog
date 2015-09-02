@@ -34,8 +34,9 @@ class BaseHandler(webapp2.RequestHandler):
     def write(self, *a, **kwargs):
         self.response.write(*a, **kwargs)
 
-    @staticmethod
-    def render_str(template, **params):
+    def render_str(self, template, **params):
+        # Add user from initialize method
+        params['user'] = self.user
         t = JINJA_ENVIRONMENT.get_template(template)
         return t.render(params)
 
@@ -63,5 +64,6 @@ class BaseHandler(webapp2.RequestHandler):
         """
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('userId')
-        print('INITIALIZE! userId: ' + uid)
+        print('INITIALIZE!')
+        print(uid)
         self.user = uid and User.by_id(int(uid))
