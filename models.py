@@ -63,3 +63,6 @@ class User(db.Model):
         print(user)
         if user and validate_password(name, password, user.password_hash):
             return user
+
+    def __str__(self):
+        return 'User{id:%s, name:%s}' % (self.key().id(), self.name)
