@@ -36,6 +36,14 @@ class BlogEntry2(db.Model):
         # Create HTML new lines
         return self.content.replace('\n', '<br>')
 
+    def as_dict(self):
+        return {
+            'subject': self.subject,
+            'content': self.content,
+            'created': self.created.strftime('%a %b %d %H:%M:%S %Y')
+        }
+
+
 class User(db.Model):
     name = db.StringProperty(required=True)
     password_hash = db.StringProperty(required=True)
