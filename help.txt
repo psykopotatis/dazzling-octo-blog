@@ -3,3 +3,6 @@
 
 # Deploy live
 /home/ingemar.hjalmstad/bin/google_appengine/appcfg.py -A dazzling-octo-blog update app.yaml
+
+# If logged in to another Google acount, add --no_cookies
+/home/ingemar.hjalmstad/bin/google_appengine/appcfg.py -A dazzling-octo-blog --no_cookies update app.yaml
