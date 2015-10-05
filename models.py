@@ -44,6 +44,10 @@ class BlogEntry2(db.Model):
             'created': self.created.strftime(time_format)
         }
 
+class AsciiEntry(db.Model):
+    ascii = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+
 
 class User(db.Model):
     name = db.StringProperty(required=True)
