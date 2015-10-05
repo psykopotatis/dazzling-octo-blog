@@ -4,15 +4,12 @@ from signup import SignupPage
 from base import BaseHandler
 from login import LoginPage
 from welcome import WelcomePage
+from ascii import AsciiIndexPage
 
 
 class IndexPage(BaseHandler):
     def get(self):
         self.render('/templates/index.html')
-
-class AsciiIndexPage(BaseHandler):
-    def get(self):
-        self.render('/templates/ascii/index.html')
 
 class BlogMainPage(BaseHandler):
     def get(self):
