@@ -37,7 +37,7 @@ class BlogMainPage(BaseHandler):
 
 class NewPostPage(BaseHandler):
     def render_page(self, subject='', content='', error=''):
-        self.render('/templates/newpost.html', subject=subject, content=content, error=error)
+        self.render('/templates/blog/post.html', subject=subject, content=content, error=error)
 
     def get(self):
         self.render_page()
@@ -63,7 +63,7 @@ class BlogEntryPage(BaseHandler):
             self.error(404)
             return
         if self.format == 'html':
-            self.render('/templates/blogentry.html', blog_entry_id=blog_entry_id, blog_entry=blog_entry)
+            self.render('/templates/blog/entry.html', blog_entry_id=blog_entry_id, blog_entry=blog_entry)
         else:
             self.render_json(blog_entry.as_dict)
 
