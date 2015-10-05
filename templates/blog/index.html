@@ -1,0 +1,28 @@
+{% extends "/templates/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb">
+            <li>Home</li>
+            <li class="active">Blog</li>
+        </ol>
+
+        <p>Cool. You have been here {{ visits }} times.</p>
+
+        <hr>
+
+        {% for blog_entry in blog_entries %}
+
+        <div>
+            <div>{{ blog_entry.created }}</div>
+            <div><strong>{{ blog_entry.subject }}</strong></div>
+            <div>{{ blog_entry.content | safe }}</div>
+        </div>
+
+        <hr>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

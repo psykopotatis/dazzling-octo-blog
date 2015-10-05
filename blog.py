@@ -1,10 +1,18 @@
 import webapp2
-from webapp2_extras import json
 from models import BlogEntry2
 from signup import SignupPage
 from base import BaseHandler
 from login import LoginPage
 from welcome import WelcomePage
+
+
+class IndexPage(BaseHandler):
+    def get(self):
+        self.render('/templates/index.html')
+
+class AsciiIndexPage(BaseHandler):
+    def get(self):
+        self.render('/templates/ascii/index.html')
 
 class BlogMainPage(BaseHandler):
     def get(self):
@@ -21,7 +29,7 @@ class BlogMainPage(BaseHandler):
         self.set_secure_cookie('visits', str(visits))
 
         if self.format == 'html':
-            self.render('/templates/index.html', blog_entries=blog_entries, visits=visits)
+            self.render('/templates/blog/index.html', blog_entries=blog_entries, visits=visits)
         else:
             blog_entries_json = [blog_entry.as_dict() for blog_entry in blog_entries]
             self.render_json(blog_entries_json)
@@ -68,6 +76,8 @@ class LogoutPage(BaseHandler):
 
 
 app = webapp2.WSGIApplication([
+    (r'/', IndexPage),
+    (r'/ascii/?', AsciiIndexPage),
     (r'/blog/?(?:.json)?', BlogMainPage),  # slash at end is optional, .json is optional
     (r'/blog/signup', SignupPage),
     (r'/blog/welcome', WelcomePage),
