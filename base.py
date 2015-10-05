@@ -4,6 +4,7 @@ import logging
 
 import jinja2
 import webapp2
+import json
 from models import User
 
 logging.getLogger().setLevel(logging.DEBUG)
@@ -43,6 +44,11 @@ class BaseHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
+    def render_json(self, data):
+        json_txt = json.dumps(data)
+        self.response.headers['Content-Type'] = 'application/json; charset=UTF-8'
+        self.write(json_txt)
+
     def set_secure_cookie(self, name, val):
         cookie_val = self.make_secure_val(val)
         # No expire time, default expires when we close the browser
@@ -67,3 +73,8 @@ class BaseHandler(webapp2.RequestHandler):
         print('INITIALIZE!')
         print(uid)
         self.user = uid and User.by_id(int(uid))
+
+        if self.request.url.endswith('.json'):
+            self.format = 'json'
+        else:
+            self.format = 'html'

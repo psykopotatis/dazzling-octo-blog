@@ -20,20 +20,11 @@ class BlogMainPage(BaseHandler):
 
         self.set_secure_cookie('visits', str(visits))
 
-        self.render('/templates/index.html', blog_entries=blog_entries, visits=visits)
-
-class BlogMainPageAsJson(BaseHandler):
-    def get(self):
-        blog_entries = BlogEntry2.all().order('created')
-        blogs = list(blog_entries)
-
-        result = []
-        for blog in blogs:
-            result.append(blog.as_dict())
-
-        self.response.headers.add_header(
-            'Content-Type', 'application/json; charset=UTF-8')
-        self.response.write(json.encode(result))
+        if self.format == 'html':
+            self.render('/templates/index.html', blog_entries=blog_entries, visits=visits)
+        else:
+            blog_entries_json = [blog_entry.as_dict() for blog_entry in blog_entries]
+            self.render_json(blog_entries_json)
 
 
 class NewPostPage(BaseHandler):
@@ -63,19 +54,10 @@ class BlogEntryPage(BaseHandler):
         if not blog_entry:
             self.error(404)
             return
-        self.render('/templates/blogentry.html', blog_entry_id=blog_entry_id, blog_entry=blog_entry)
-
-
-class BlogEntryPageAsJson(BaseHandler):
-    def get(self, blog_entry_id):
-        blog_entry = BlogEntry2.get_by_id(int(blog_entry_id))
-        if not blog_entry:
-            self.error(404)
-            return
-
-        self.response.headers.add_header(
-            'Content-Type', 'application/json; charset=UTF-8')
-        self.response.write(json.encode(blog_entry.as_dict()))
+        if self.format == 'html':
+            self.render('/templates/blogentry.html', blog_entry_id=blog_entry_id, blog_entry=blog_entry)
+        else:
+            self.render_json(blog_entry.as_dict)
 
 
 class LogoutPage(BaseHandler):
@@ -86,13 +68,11 @@ class LogoutPage(BaseHandler):
 
 
 app = webapp2.WSGIApplication([
-    (r'/blog', BlogMainPage),
-    (r'/blog/.json', BlogMainPageAsJson),
+    (r'/blog/?(?:.json)?', BlogMainPage),  # slash at end is optional, .json is optional
     (r'/blog/signup', SignupPage),
     (r'/blog/welcome', WelcomePage),
     (r'/blog/login', LoginPage),
     (r'/blog/logout', LogoutPage),
     (r'/blog/newpost', NewPostPage),
-    (r'/blog/(\d+)', BlogEntryPage),
-    (r'/blog/(\d+).json', BlogEntryPageAsJson),
+    (r'/blog/(\d+)/?(?:\.json)?', BlogEntryPage),  # .json is optional
 ], debug=True)

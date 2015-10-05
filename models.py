@@ -37,10 +37,11 @@ class BlogEntry2(db.Model):
         return self.content.replace('\n', '<br>')
 
     def as_dict(self):
+        time_format = '%c'
         return {
             'subject': self.subject,
             'content': self.content,
-            'created': self.created.strftime('%a %b %d %H:%M:%S %Y')
+            'created': self.created.strftime(time_format)
         }
 
 
