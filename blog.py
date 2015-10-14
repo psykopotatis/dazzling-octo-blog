@@ -12,9 +12,9 @@ class IndexPage(BaseHandler):
         self.render('/templates/index.html')
 
 CACHE = {}
-def get_blog_entries():
+def get_blog_entries(update = False):
     key = 'blog'
-    if key in CACHE:
+    if not update and key in CACHE:
         print('CACHE HIT')
         result = CACHE[key]
     else:
@@ -63,8 +63,8 @@ class NewPostPage(BaseHandler):
             # Store this instance in the database
             b.put()
 
-            # Clear cache
-            CACHE.clear()
+            # Rerun query and update cache
+            get_blog_entries(True)
 
             # Redirect to new url
             self.redirect('/blog/%s' % b.key().id())
