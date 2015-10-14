@@ -11,10 +11,22 @@ class IndexPage(BaseHandler):
     def get(self):
         self.render('/templates/index.html')
 
+CACHE = {}
+def get_blog_entries():
+    key = 'blog'
+    if key in CACHE:
+        print('CACHE HIT')
+        blog_entries = CACHE[key]
+    else:
+        print('CACHE MISS')
+        blog_entries = BlogEntry2.all().order('created')
+        CACHE[key] = blog_entries
+    return blog_entries
+
 class BlogMainPage(BaseHandler):
     def get(self):
         # blog_entries = db.GqlQuery('SELECT * FROM BlogEntry2 ORDER BY created DESC')
-        blog_entries = BlogEntry2.all().order('created')
+        blog_entries = get_blog_entries()
 
         visits = 0
         visit_cookie_str = self.read_secure_cookie('visits')
