@@ -16,12 +16,16 @@ def get_blog_entries():
     key = 'blog'
     if key in CACHE:
         print('CACHE HIT')
-        blog_entries = CACHE[key]
+        result = CACHE[key]
     else:
         print('CACHE MISS')
         blog_entries = BlogEntry2.all().order('created')
-        CACHE[key] = blog_entries
-    return blog_entries
+
+        # Create a list of entries, instead of using the database cursor
+        result = list(blog_entries)
+
+        CACHE[key] = result
+    return result
 
 class BlogMainPage(BaseHandler):
     def get(self):
@@ -58,6 +62,10 @@ class NewPostPage(BaseHandler):
             b = BlogEntry2(subject=subject, content=content)
             # Store this instance in the database
             b.put()
+
+            # Clear cache
+            CACHE.clear()
+
             # Redirect to new url
             self.redirect('/blog/%s' % b.key().id())
         else:
