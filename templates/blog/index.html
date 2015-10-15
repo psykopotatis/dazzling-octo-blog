@@ -26,6 +26,9 @@
             <div>{{ blog_entry.created }}</div>
             <div><strong>{{ blog_entry.subject }}</strong></div>
             <div>{{ blog_entry.content | safe }}</div>
+            {% if blog_entry.creator %}
+            <div><strong>// {{ blog_entry.creator.name }}</strong></div>
+            {%  endif %}
         </div>
 
         <hr>

@@ -109,6 +109,9 @@ class NewPostPage(BaseHandler):
             if coords:
                 b.coords = coords
 
+            # Add the user
+            b.creator = self.user
+
             # Store this instance in the database
             b.put()
 

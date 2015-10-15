@@ -27,31 +27,6 @@ def users_key(group='default'):
 
 # ----------------------------------------
 
-class BlogEntry2(db.Model):
-    subject = db.StringProperty(required=True)
-    content = db.TextProperty(required=True)
-    created = db.DateTimeProperty(auto_now_add=True)
-    coords = db.GeoPtProperty()
-
-    def render(self):
-        # Create HTML new lines
-        return self.content.replace('\n', '<br>')
-
-    def as_dict(self):
-        time_format = '%c'
-        return {
-            'subject': self.subject,
-            'content': self.content,
-            'created': self.created.strftime(time_format)
-        }
-
-    def __str__(self):
-        return 'BlogEntry2{coords:%s}' % (self.coords)
-
-class AsciiEntry(db.Model):
-    ascii = db.TextProperty(required=True)
-    created = db.DateTimeProperty(auto_now_add=True)
-
 
 class User(db.Model):
     name = db.StringProperty(required=True)
@@ -83,3 +58,30 @@ class User(db.Model):
 
     def __str__(self):
         return 'User{id:%s, name:%s}' % (self.key().id(), self.name)
+
+
+class BlogEntry2(db.Model):
+    subject = db.StringProperty(required=True)
+    content = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    coords = db.GeoPtProperty()
+    creator = db.ReferenceProperty(User)
+
+    def render(self):
+        # Create HTML new lines
+        return self.content.replace('\n', '<br>')
+
+    def as_dict(self):
+        time_format = '%c'
+        return {
+            'subject': self.subject,
+            'content': self.content,
+            'created': self.created.strftime(time_format)
+        }
+
+    def __str__(self):
+        return 'BlogEntry2{coords:%s}' % (self.coords)
+
+class AsciiEntry(db.Model):
+    ascii = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
