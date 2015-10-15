@@ -31,6 +31,7 @@ class BlogEntry2(db.Model):
     subject = db.StringProperty(required=True)
     content = db.TextProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
+    coords = db.GeoPtProperty()
 
     def render(self):
         # Create HTML new lines
@@ -43,6 +44,9 @@ class BlogEntry2(db.Model):
             'content': self.content,
             'created': self.created.strftime(time_format)
         }
+
+    def __str__(self):
+        return 'BlogEntry2{coords:%s}' % (self.coords)
 
 class AsciiEntry(db.Model):
     ascii = db.TextProperty(required=True)

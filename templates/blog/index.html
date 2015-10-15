@@ -12,6 +12,14 @@
 
         <hr>
 
+        {%  if img_url %}
+            <img src="{{ img_url }}">
+        {%  endif %}
+
+
+
+        <hr>
+
         {% for blog_entry in blog_entries %}
 
         <div>

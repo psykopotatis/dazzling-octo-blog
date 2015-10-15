@@ -1,4 +1,5 @@
 from google.appengine.api import memcache
+from google.appengine.ext import db
 
 import webapp2
 from models import BlogEntry2
@@ -7,6 +8,8 @@ from base import BaseHandler
 from login import LoginPage
 from welcome import WelcomePage
 from ascii import AsciiIndexPage
+import urllib2
+from xml.dom.minidom import parseString
 
 
 class IndexPage(BaseHandler):
@@ -18,7 +21,8 @@ def get_blog_entries(update = False):
     blog_entries = memcache.get(key)
     if blog_entries is None or update:
         print('CACHE MISS')
-        blog_entries = BlogEntry2.all().order('created')
+        # blog_entries = BlogEntry2.all().order('created')
+        blog_entries = db.GqlQuery('SELECT * FROM BlogEntry2 ORDER BY created DESC')
         # Create a list of entries, instead of using the database cursor
         blog_entries = list(blog_entries)
         # Set to memcache
@@ -26,10 +30,46 @@ def get_blog_entries(update = False):
 
     return blog_entries
 
+IP_URL = 'http://api.hostip.info/?ip='
+
+def get_coords(ip):
+    url = IP_URL + ip
+    content = None
+    try:
+        content = urllib2.urlopen(url).read()
+    except URLError:
+        return None
+
+    if content:
+        dom = parseString(content)
+        coords = dom.getElementsByTagName('gml:coordinates')
+        if coords and coords[0].childNodes[0].nodeValue:
+            lon, lat = coords[0].childNodes[0].nodeValue.split(',')
+            return db.GeoPt(lat, lon)
+
+GMAPS_URL = "http://maps.googleapis.com/maps/api/staticmap?size=380x263&sensor=false&"
+
+def gmaps_img(points):
+    markers = '&'.join('markers=%s,%s' % (p.lat, p.lon) for p in points)
+    return GMAPS_URL + markers
+
 class BlogMainPage(BaseHandler):
     def get(self):
+        ip = self.request.remote_addr
+        self.write('ip='+repr(get_coords(ip)))
         # blog_entries = db.GqlQuery('SELECT * FROM BlogEntry2 ORDER BY created DESC')
         blog_entries = get_blog_entries()
+
+        # Check what entries have coords
+        points = []
+        for blog_entry in blog_entries:
+            if blog_entry.coords:
+                points.append(blog_entry.coords)
+
+        # If we have coords, create an image url
+        img_url = None
+        if points:
+            img_url = gmaps_img(points)
 
         visits = 0
         visit_cookie_str = self.read_secure_cookie('visits')
@@ -41,7 +81,11 @@ class BlogMainPage(BaseHandler):
         self.set_secure_cookie('visits', str(visits))
 
         if self.format == 'html':
-            self.render('/templates/blog/index.html', blog_entries=blog_entries, visits=visits)
+            self.render('/templates/blog/index.html',
+                        blog_entries=blog_entries,
+                        visits=visits,
+                        img_url=img_url
+                        )
         else:
             blog_entries_json = [blog_entry.as_dict() for blog_entry in blog_entries]
             self.render_json(blog_entries_json)
@@ -59,6 +103,12 @@ class NewPostPage(BaseHandler):
         content = self.request.get('content')
         if subject and content:
             b = BlogEntry2(subject=subject, content=content)
+
+            # Add user coords
+            coords = get_coords(self.request.remote_addr)
+            if coords:
+                b.coords = coords
+
             # Store this instance in the database
             b.put()
 
