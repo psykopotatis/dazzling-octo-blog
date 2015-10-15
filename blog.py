@@ -1,3 +1,5 @@
+from google.appengine.api import memcache
+
 import webapp2
 from models import BlogEntry2
 from signup import SignupPage
@@ -11,21 +13,18 @@ class IndexPage(BaseHandler):
     def get(self):
         self.render('/templates/index.html')
 
-CACHE = {}
 def get_blog_entries(update = False):
     key = 'blog'
-    if not update and key in CACHE:
-        print('CACHE HIT')
-        result = CACHE[key]
-    else:
+    blog_entries = memcache.get(key)
+    if blog_entries is None or update:
         print('CACHE MISS')
         blog_entries = BlogEntry2.all().order('created')
-
         # Create a list of entries, instead of using the database cursor
-        result = list(blog_entries)
+        blog_entries = list(blog_entries)
+        # Set to memcache
+        memcache.set(key, blog_entries)
 
-        CACHE[key] = result
-    return result
+    return blog_entries
 
 class BlogMainPage(BaseHandler):
     def get(self):
