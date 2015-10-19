@@ -179,6 +179,13 @@ class LogoutPage(BaseHandler):
         self.redirect('/blog')
 
 
+class FlushCache(BaseHandler):
+    def get(self):
+        # Deletes everything in memcache.
+        memcache.flush_all()
+        self.redirect('/blog')
+
+
 app = webapp2.WSGIApplication([
     (r'/', IndexPage),
     (r'/ascii/?', AsciiIndexPage),
@@ -188,5 +195,6 @@ app = webapp2.WSGIApplication([
     (r'/blog/login', LoginPage),
     (r'/blog/logout', LogoutPage),
     (r'/blog/newpost', NewPostPage),
+    (r'/blog/flush', FlushCache),
     (r'/blog/(\d+)/?(?:\.json)?', BlogEntryPage),  # .json is optional
 ], debug=True)
