@@ -1,6 +1,7 @@
 from google.appengine.api import memcache
 from google.appengine.ext import db
 
+import time
 import webapp2
 from models import BlogEntry2
 from signup import SignupPage
@@ -16,6 +17,19 @@ class IndexPage(BaseHandler):
     def get(self):
         self.render('/templates/index.html')
 
+def get_time_since_last_cache_miss():
+    key = 'time'
+    last_cache_miss = memcache.get(key)
+    now = time.time()
+
+    if last_cache_miss:
+        result = now - last_cache_miss
+    else:
+        result = 0
+
+    return result
+
+
 def get_blog_entries(update = False):
     key = 'blog'
     blog_entries = memcache.get(key)
@@ -27,6 +41,7 @@ def get_blog_entries(update = False):
         blog_entries = list(blog_entries)
         # Set to memcache
         memcache.set(key, blog_entries)
+        memcache.set('time', time.time())
 
     return blog_entries
 
@@ -80,11 +95,15 @@ class BlogMainPage(BaseHandler):
 
         self.set_secure_cookie('visits', str(visits))
 
+
+        query = 'Queried %s seconds ago' % get_time_since_last_cache_miss()
+
         if self.format == 'html':
             self.render('/templates/blog/index.html',
                         blog_entries=blog_entries,
                         visits=visits,
-                        img_url=img_url
+                        img_url=img_url,
+                        query=query
                         )
         else:
             blog_entries_json = [blog_entry.as_dict() for blog_entry in blog_entries]
