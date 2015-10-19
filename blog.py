@@ -17,8 +17,7 @@ class IndexPage(BaseHandler):
     def get(self):
         self.render('/templates/index.html')
 
-def get_time_since_last_cache_miss():
-    key = 'time'
+def get_time_since_last_cache_miss(key):
     last_cache_miss = memcache.get(key)
     now = time.time()
 
@@ -27,7 +26,7 @@ def get_time_since_last_cache_miss():
     else:
         result = 0
 
-    return result
+    return 'Queried %s seconds ago' % int(result)
 
 
 def get_blog_entries(update = False):
@@ -44,6 +43,17 @@ def get_blog_entries(update = False):
         memcache.set('time', time.time())
 
     return blog_entries
+
+def get_blog_entry(key):
+    blog_entry = memcache.get(key)
+    if not blog_entry:
+        print('CACHE MISS')
+        blog_entry = BlogEntry2.get_by_id(int(key))
+        memcache.set(key, blog_entry)
+        memcache.set(key+'_time', time.time())
+
+    return blog_entry
+
 
 IP_URL = 'http://api.hostip.info/?ip='
 
@@ -96,7 +106,7 @@ class BlogMainPage(BaseHandler):
         self.set_secure_cookie('visits', str(visits))
 
 
-        query = 'Queried %s seconds ago' % get_time_since_last_cache_miss()
+        query = get_time_since_last_cache_miss('time')
 
         if self.format == 'html':
             self.render('/templates/blog/index.html',
@@ -146,12 +156,18 @@ class NewPostPage(BaseHandler):
 
 class BlogEntryPage(BaseHandler):
     def get(self, blog_entry_id):
-        blog_entry = BlogEntry2.get_by_id(int(blog_entry_id))
+        blog_entry = get_blog_entry(blog_entry_id)
+        query = get_time_since_last_cache_miss(blog_entry_id+'_time')
+
         if not blog_entry:
             self.error(404)
             return
         if self.format == 'html':
-            self.render('/templates/blog/entry.html', blog_entry_id=blog_entry_id, blog_entry=blog_entry)
+            self.render('/templates/blog/entry.html',
+                        blog_entry_id=blog_entry_id,
+                        blog_entry=blog_entry,
+                        query=query
+                        )
         else:
             self.render_json(blog_entry.as_dict)
 
